@@ -1,6 +1,7 @@
 namespace Luis
 
 open MBrace.FsPickler.Json
+open HttpFs
 open Hopac
 open HttpFs.Client
 open System
@@ -102,6 +103,14 @@ type Caller(baseUrl: Uri, appId: Guid, versionId: string, apiKey: string) =
     member this.Train() =
         let url = sprintf "%s/train" _urlToApi
         createPost url "" |> call
+
+    member this.Predict(predict: Predict) =
+        let url = sprintf "%s?%A" _urlToApi predict
+        createGet url "" |> call
+
+    member this.PredictAsPost(predict: Predict) =
+        let url = sprintf "%s?%s" _urlToApi (predict.WithoutQuery())
+        createPost url predict.query |> call
 
 module Caller =
     let create baseUrl appId versionId apiKey =
