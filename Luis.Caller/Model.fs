@@ -55,11 +55,7 @@ and EntityLabel =
         startCharIndex: int
         endCharIndex: int
     }
-
-type BingSpellCheck =
-    {
-        apiKey: string
-    }
+type BingSpellCheck = ApiKey of string
 
 [<StructuredFormatDisplay("{StructuredFormatDisplay}")>]
 type Predict =
@@ -73,15 +69,15 @@ type Predict =
     member this.WithoutQuery() =
         let s = 
             match this.spellCheck with
-            | Some sc -> sprintf "spellCheck=%s" sc.apiKey
+            | Some sc -> 
+                let v = match sc with | ApiKey k -> k
+                sprintf "&spellCheck=true&bing-spell-check-subscription-key=%s" v
             | _ -> ""
 
         sprintf "verbose=%A&staging=%A&log=%A%s" this.verbose this.staging this.log s
 
     member this.StructuredFormatDisplay =
         sprintf "q=%s&%s" this.query (this.WithoutQuery())
-
-    
 
 module Label =
     let create text name entities =

@@ -8,12 +8,13 @@ open System
 open Luis.Model
 open Luis.Responses
 
-type Caller(baseUrl: Uri, appId: Guid, versionId: string, apiKey: string) =
+type Caller(baseUrl: Uri, appUrl: Uri, appId: Guid, versionId: string, apiKey: string) =
     let _apiKey = apiKey
     let jsonSerializer = FsPickler.CreateJsonSerializer(false, true)
     
+    let _urlToApp = sprintf "%A/apps/%A" appUrl appId
     let _urlToApi = sprintf "%A/apps/%A/versions/%s" baseUrl appId versionId
-
+    
     let createRequest url data methodType =
         Request.createUrl methodType url
         |> Request.setHeader (Custom ("Ocp-Apim-Subscription-Key", _apiKey))
@@ -105,13 +106,15 @@ type Caller(baseUrl: Uri, appId: Guid, versionId: string, apiKey: string) =
         createPost url "" |> call
 
     member this.Predict(predict: Predict) =
-        let url = sprintf "%s?%A" _urlToApi predict
+        let url = sprintf "%s?%A" _urlToApp predict
+        Console.WriteLine(url)
         createGet url "" |> call
 
     member this.PredictAsPost(predict: Predict) =
-        let url = sprintf "%s?%s" _urlToApi (predict.WithoutQuery())
+        let url = sprintf "%s?%s" _urlToApp (predict.WithoutQuery())
         createPost url predict.query |> call
 
 module Caller =
-    let create baseUrl appId versionId apiKey =
-        Caller(baseUrl, appId, versionId, apiKey)
+    let create baseUrl appUrl appId versionId apiKey =
+        Caller(baseUrl, appUrl, appId, versionId, apiKey)
+            
