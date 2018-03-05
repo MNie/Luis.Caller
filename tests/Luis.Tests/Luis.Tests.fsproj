@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="DateTimeParser.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FsCheck" Version="2.10.8" />
+    <PackageReference Include="shouldly" Version="3.0.0" />
+    <PackageReference Include="XUnit" Version="2.3.1" />
+  </ItemGroup>
+
+</Project>
