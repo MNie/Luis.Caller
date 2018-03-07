@@ -107,7 +107,6 @@ type Caller(baseUrl: Uri, appUrl: Uri, appId: Guid, versionId: string, apiKey: s
 
     member this.Predict(predict: Predict) =
         let url = sprintf "%s?%A" _urlToApp predict
-        Console.WriteLine(url)
         createGet url "" |> call
 
     member this.PredictAsPost(predict: Predict) =
