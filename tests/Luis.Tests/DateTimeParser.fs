@@ -1,30 +1,26 @@
-module Luis.Tests.DateTimeParser
-
+namespace Luis.Tests.DateTimeParser.Helpers
 open Xunit
 open Shouldly
-open System
-open FsCheck
+open Newtonsoft.Json
+open Luis.Parser.DateTimeV2
 
-type PeriodMock =
-    {
-        howMany: int
-        typeOf: string
-        startP: DateTime
-        endP: DateTime
-    }
-
-type DurationMock =
-    {
-        howMany: int
-        typeOf: string
-    }
-
-type DateTimeParserSpecs =
-    [<Fact>]
-    member this.``should properly parse period``(PeriodMock mock)
-        true = false
+type DurationParserSpecs() =
+    let toCheck = "{\"timex\":\"P5M\",\"type\":\"duration\",\"value\":\"123\"}"
+    let res = JsonConvert.DeserializeObject<Duration>(toCheck)
 
     [<Fact>]
-    member this.``should properly parse duration``(DurationMock mock)
-        true = false
+    member this.``parsed duration should have duration as a type``() =
+        res.Type.ShouldBe(TimeType.Duration)
+
+    [<Fact>]
+    member this.``parsed duration should have 123 as a value``() =
+        res.Value.ShouldBe(123)
+
+    [<Fact>]
+    member this.``parsed duration should have month as a type of timex``() =
+        res.Timex.Type.ShouldBe(PeriodType.Month)
+
+    [<Fact>]
+    member this.``parsed duration should have 5 as a interval in timex``() =
+        res.Timex.Interval.ShouldBe(5)
 
