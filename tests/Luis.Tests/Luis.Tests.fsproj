@@ -5,7 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="DateTimeParser.fs" />
+    <Compile Include="RangeParserSpecs.fs" />
+    <Compile Include="DurationParserSpecs.fs" />
   </ItemGroup>
 
   <ItemGroup>
