@@ -22,7 +22,7 @@ type RangeParserSpecs() =
 
     [<Fact>]
     member this.``parsed dateRange should have 4 3 2018 as an end date``() =
-        res.End.ShouldBe(DateTime(2018, 2, 24))
+        res.End.ShouldBe(DateTime(2018, 3, 4))
 
     [<Fact>]
     member this.``parsed dateRange should have month as a type of timex period``() =

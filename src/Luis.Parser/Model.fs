@@ -2,7 +2,7 @@ namespace Luis.Parser.DateTimeV2
 
 open System
 open Newtonsoft.Json
-open Microsoft.FSharp.Reflection
+open System.Text.RegularExpressions
 
 exception ParseError of string
 type YearValue = YearValue of int
@@ -74,7 +74,7 @@ type TimeTypeConverter() =
 type TimexTypeConverter() =
     inherit JsonConverter()
 
-    let parseAsExpected(toCheck: obj, serializer: JsonSerializer, reader: JsonReader): TimexType  =
+    let parseAsExpected(toCheck: obj): TimexType  =
         let check = downcast toCheck: string
         let s = ref 0
         if Int32.TryParse(check, s) then Year(YearValue s.Value)
@@ -83,8 +83,8 @@ type TimexTypeConverter() =
                 Period.parsePeriod check |> Period
             with
             | _ -> 
-                let values = serializer.Deserialize(reader, typeof<obj[]>) :?> obj[]
-                let st, en, pe = downcast FSharpValue.MakeTuple(values, typedefof<Range>): SerializedRange
+                let v = Regex.Replace(check, "([()])", "").Split(',')
+                let st, en, pe = (DateTime.Parse v.[0], DateTime.Parse v.[1], v.[2])
                 let p = Period.parsePeriod pe
                 Range(RangeValue(st, en, p))
 
@@ -93,7 +93,7 @@ type TimexTypeConverter() =
 
     override this.ReadJson(reader: JsonReader, objectType: Type, existingValue: obj, serializer: JsonSerializer): obj =
         let toCheck = downcast reader.Value: string
-        parseAsExpected(toCheck, serializer, reader) :> obj
+        parseAsExpected(toCheck) :> obj
 
     override this.CanConvert(objType: Type): bool =
         typedefof<TimexType> = objType
